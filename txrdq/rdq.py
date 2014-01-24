@@ -268,12 +268,14 @@ class ResizableDispatchQueue(object):
             self._underway.add(job)
             job.launch(self._func)
             # Return the first waiting Deferred for the job, if any.
-            # Otherwise return a new Deferred for the job. Our self._coop
-            # (a task.Cooperator) will wait for the Deferred result.
+            # Our self._coop (a task.Cooperator) will wait for the
+            # Deferred result.
             try:
                 return job.waiting[0]
             except IndexError:
-                return job.watch()
+                # There are no Deferreds waiting on the result of
+                # this job.
+                return None
 
     def getWidth(self):
         """
