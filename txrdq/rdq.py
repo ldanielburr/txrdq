@@ -261,8 +261,9 @@ class ResizableDispatchQueue(object):
         @param job: a L{Job} to get underway.  If the job is a no-op, do
         nothing.
 
-        @return: Unless the job is a no-op, return a C{Deferred} that will fire
-        with the result of processing the job. Otherwise, return C{None}.
+        @return: C{None}, if the job is a no-op, or if the job has already
+                 finished or failed.  Otherwise, a C{Deferred} that will
+                 fire with the result of processing the job.
         """
         if job is not self._NOOP:
             self._underway.add(job)
@@ -274,8 +275,9 @@ class ResizableDispatchQueue(object):
                 return job.waiting[0]
             except IndexError:
                 # There are no Deferreds waiting on the result of
-                # this job.
-                return None
+                # this job, indicating that the job has already
+                # finished or failed.
+                pass
 
     def getWidth(self):
         """
